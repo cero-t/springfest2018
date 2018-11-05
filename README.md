@@ -1,1 +1,1 @@
-# springfest2018
+Spring Fest 2018 demo applications
