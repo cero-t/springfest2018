@@ -165,7 +165,8 @@ public class FrontController {
         Flux<Student> students = webClient.get()
                 .uri("localhost:8081/students/flux")
                 .retrieve()
-                .bodyToFlux(Student.class);
+                .bodyToFlux(Student.class)
+                .cache();
 
         Flux<StudentScore> studentScore = webClient.post()
                 .uri("localhost:8081/scores/flux")
@@ -175,7 +176,6 @@ public class FrontController {
                 .bodyToFlux(Score.class)
                 .collectList()
                 .map(scores -> scores.stream().collect(Collectors.groupingBy(s -> s.id)))
-                // TODO: Here, students#map causes another access to /students because students flux are already used.
                 .flatMapMany(scoreMap -> students.map(student -> new StudentScore(student, scoreMap.get(student.id))));
 
         return studentScore.doOnComplete(() ->
